@@ -53,6 +53,10 @@ var Converter = {
       return '';
     }
 
+    if (str.length > AMOUNT.length * 3) {
+      throw new Error('Maximum number possible passed!')
+    }
+
     let result = [];
     const numList = this._getFormattedNumberList(str);
     let amountIndex = 0;
