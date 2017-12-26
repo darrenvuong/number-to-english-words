@@ -1,0 +1,26 @@
+{
+  "name": "number-to-english-words",
+  "version": "1.0.0",
+  "description": "UI to convert a number to english words",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/darrenvuong/number-to-english-words.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/darrenvuong/number-to-english-words/issues"
+  },
+  "homepage": "https://github.com/darrenvuong/number-to-english-words#readme",
+  "devDependencies": {
+    "chai": "4.1.2",
+    "mocha": "4.0.1"
+  }
+}

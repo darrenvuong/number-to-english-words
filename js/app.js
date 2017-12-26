@@ -1,6 +1,5 @@
 const MAP = {
   SINGLE: {
-    '0': 'zero',
     '1': 'one',
     '2': 'two',
     '3': 'three',
@@ -39,7 +38,8 @@ const AMOUNT = ['', 'thousand', 'million', 'billion', 'trillion', 'quadrillion',
 
 const WORD = {
   HUNDRED: 'hundred',
-  AND: 'and'
+  AND: 'and',
+  ZERO: 'Zero'
 };
 
 const NUMS = {
@@ -59,28 +59,36 @@ var Converter = {
 
     let result = [];
     const numList = this._getFormattedNumberList(str);
-    let amountIndex = 0;
 
+    if (numList.length == 3 && this._isAllZeroes(numList)) {
+      return WORD.ZERO;
+    }
+
+    let amountIndex = 0;
     for (let i=numList.length - 1; i>0; i-=3) {
-      if (amountIndex > 0) {
-        result.unshift(AMOUNT[amountIndex]);
+      const hundredsList = numList.slice(i - 2, i + 1);
+
+      if (!this._isAllZeroes(hundredsList)) {
+        if (amountIndex > 0) {
+          result.unshift(AMOUNT[amountIndex]);
+        }
+        result.unshift(this._getConvertedNumber(hundredsList));
       }
-      result.unshift(this._getConvertedNumber(numList.slice(i - 2, i + 1)));
+
       amountIndex += 1;
     }
 
     result[0] = result[0].charAt(0).toUpperCase() + result[0].slice(1);
-
     return result.join(' ');
   },
+
+  _isAllZeroes: function(list) {
+    return list.every(x => x == 0);
+  },
+
   // converts ['0', '1', '5'] to 'fifteen'
   _getConvertedNumber: function(arr) {
     const result = [];
-
-    if (arr[0] == NUMS.ZERO && arr[1] == NUMS.ZERO && arr[2] == NUMS.ZERO) {
-      result.push(MAP.SINGLE[arr[2]]);
-      return result.join(' ');
-    }
 
     if (arr[0] != NUMS.ZERO) {
       result.push(MAP.SINGLE[arr[0]]);
@@ -144,30 +152,5 @@ var app = {
   }
 };
 
-// unit tests
-console.assert(Converter._getConvertedNumber(['0', '0', '0']) == 'zero', 'Conversion error');
-console.assert(Converter._getConvertedNumber(['0', '0', '5']) == 'five', 'Conversion error');
-console.assert(Converter._getConvertedNumber(['0', '1', '1']) == 'eleven', 'Conversion error');
-console.assert(Converter._getConvertedNumber(['0', '8', '5']) == 'eighty five', 'Conversion error');
-console.assert(Converter._getConvertedNumber(['0', '8', '0']) == 'eighty', 'Conversion error');
-console.assert(Converter._getConvertedNumber(['1', '0', '0']) == 'one hundred', 'Conversion error');
-console.assert(Converter._getConvertedNumber(['1', '1', '2']) == 'one hundred and twelve', 'Conversion error');
-console.assert(Converter._getConvertedNumber(['1', '4', '9']) == 'one hundred and forty nine', 'Conversion error');
-console.assert(Converter._getConvertedNumber(['1', '0', '3']) == 'one hundred and three', 'Conversion error');
-
-console.assert(Converter._getFormattedNumberList('0').toString() == ['0', '0', '0'].toString());
-console.assert(Converter._getFormattedNumberList('15').toString() == ['0', '1', '5'].toString());
-console.assert(Converter._getFormattedNumberList('000001').toString() == ['0', '0', '1'].toString());
-console.assert(Converter._getFormattedNumberList('112').toString() == ['1', '1', '2'].toString());
-console.assert(Converter._getFormattedNumberList('20').toString() == ['0', '2', '0'].toString());
-console.assert(Converter._getFormattedNumberList('1234').toString() == ['0', '0', '1', '2', '3', '4'].toString());
-let isOnlyNumbersChecked = false;
-try {
-  Converter._getFormattedNumberList('11d11');
-} catch (e) {
-  isOnlyNumbersChecked = true;
-}
-console.assert(isOnlyNumbersChecked);
-
-console.assert(Converter.getEnglish('1234') == 'One thousand two hundred and thirty four');
+module.exports = Converter;
 
